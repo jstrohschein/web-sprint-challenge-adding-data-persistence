@@ -20,17 +20,17 @@ function findById(id) {
   return project
 }
 
-function add(project) {
-  return db('projects')
-    .insert(project, 'id')
-    .then(([id]) => findById(id))
+async function add(project) {
+    const ids = await db('projects').insert(project)
+    const newProject = await findById(ids[0])
+    return newProject
+  } 
+
+async function update(id, changes) {
+  await db('projects').where({id}).update(changes)
+  return await findById(id)
 }
 
-
-function update(id, changes) {
-
-}
-
-function remove(id) {
-  return db('projects').where({ id }).truncate()
+async function remove(id) {
+  return await db('projects').where({ id }).del()
 }

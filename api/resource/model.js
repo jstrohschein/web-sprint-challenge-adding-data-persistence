@@ -11,15 +11,15 @@ module.exports = {
 }
 
 function find() {
-  
+  return db('resources')
 }
 
 function findById(id) {
-  
+  return db('resources')
+    .where({ id }). first()
 }
 
 function findResources(id) {
-  
 }
 
 function add(resource) {

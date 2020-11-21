@@ -18,17 +18,35 @@ exports.up = function(knex) {
       t.increments()
       t.string('description', 128).notNullable()
       t.string('notes', 256)
-      t.integer('project_id')
+      t.integer('task_id')
         .unsigned()
         .notNullable()
         .references('project.id')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
     })
+
+
+    .createTable('project-tasks', tbl =>{
+      tbl.integer('project.id')
+        .unsigned()
+        .notNullable()
+        .references('project.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+      tbl.integer('task.id')
+        .unsigned()
+        .notNullable()
+        .references('task.id')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+      tbl.primary(['project_id', 'task.id'])//composite primary key 
+    })
 };
 
 exports.down = function(knex) {
   return knex.schema
+    .dropTableIfExists('project-tasks')
     .dropTableIfExists('tasks')
     .dropTableIfExists('resources')
     .dropTableIfExists('projects')

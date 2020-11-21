@@ -12,6 +12,14 @@ function find() {
   return db('projects')
 }
 
+function findProjects(id){
+  return db('projects as p')
+    .join('tasks as t', 't.task_id', 'p.project_id')
+    .where({task_id:id})
+}
+
+
+
 function findById(id) {
   const project = 
     db('projects')

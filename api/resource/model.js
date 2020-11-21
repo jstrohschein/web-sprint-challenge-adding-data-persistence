@@ -4,7 +4,6 @@ const db = require('../../data/dbConfig')
 module.exports = {
   find,
   findById,
-  findResources,
   add,
   update,
   remove
@@ -15,21 +14,24 @@ function find() {
 }
 
 function findById(id) {
-  return db('resources')
-    .where({ id }). first()
+  const resource = 
+    db('resources')
+      .where({id})
+      .first()
+  return resource
 }
 
-function findResources(id) {
+async function add(resource) {
+    const ids = await db('resources').insert(resource)
+    const newresource = await findById(ids[0])
+    return newresource
+  } 
+
+async function update(id, changes) {
+  await db('resources').where({id}).update(changes)
+  return await findById(id)
 }
 
-function add(resource) {
-  
-}
-
-function update(id, changes) {
-  
-}
-
-function remove(id) {
-  
+async function remove(id) {
+  return await db('resources').where({ id }).del()
 }

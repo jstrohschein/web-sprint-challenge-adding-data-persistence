@@ -26,15 +26,28 @@ router.get('/:id', validateId, (req, res) => {
     })
 })
 
-router.post('/', validateBody, [check('name').isLength({min:1})], (req, res) => {
-  const newtask = req.body
-  tasks.add(newtask)
-    .then(newtask => {
-      res.json(newtask)
-    })
-    .catch(err => {
-      res.json({ message: err })
-    })
+router.post('/', validateBody, [check('description').isLength({min:1}), check('project_id').isNumeric().isLength({ min: 1 })], (req, res) => {
+
+  const errors = validationResult(req)
+  const error = !errors.isEmpty()
+
+  if(error){
+    res.json({ errors: errors.array() })
+  }
+
+  else{
+
+    const newtask = req.body
+    tasks.add(newtask)
+      .then(newtask => {
+        res.json(newtask)
+      })
+      .catch(err => {
+        res.json({ message: err })
+      })
+
+  }
+
 })
 
 router.put('/:id', validateBody, validateId, (req, res) => {
@@ -78,7 +91,6 @@ function validateId(req, res, next) {
 }
 
 function validateBody(req, res, next) {
-  const body = req.body
   if(req.body && Object.keys(req.body).length > 0){
     next()
   }else{

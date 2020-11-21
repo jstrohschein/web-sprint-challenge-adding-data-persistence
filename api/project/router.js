@@ -27,14 +27,25 @@ router.get('/:id', validateId, (req, res) => {
 })
 
 router.post('/', validateBody, [check('name').isLength({min:1})], (req, res) => {
-  const newProject = req.body
-  projects.add(newProject)
-    .then(newProject => {
-      res.json(newProject)
-    })
-    .catch(err => {
-      res.json({ message: err })
-    })
+
+  const errors = validationResult(req)
+  const error = !errors.isEmpty()
+
+  if(error){
+    res.json({ errors: errors.array() })
+  }
+
+  else{
+
+    const newProject = req.body
+    projects.add(newProject)
+      .then(newProject => {
+        res.json(newProject)
+      })
+      .catch(err => {
+        res.json({ message: err })
+      })
+  }
 })
 
 router.put('/:id', validateBody, validateId, (req, res) => {
@@ -78,7 +89,6 @@ function validateId(req, res, next) {
 }
 
 function validateBody(req, res, next) {
-  const body = req.body
   if(req.body && Object.keys(req.body).length > 0){
     next()
   }else{

@@ -26,14 +26,27 @@ router.get('/:id', validateId, (req, res) => {
 })
 
 router.post('/', validateBody, [check('name').isLength({min:1})], (req, res) => {
-  const newresource = req.body
-  resources.add(newresource)
-    .then(newresource => {
-      res.json(newresource)
-    })
-    .catch(err => {
-      res.json({ message: err })
-    })
+
+  const errors = validationResult(req)
+  const error = !errors.isEmpty()
+
+  if(error){
+    res.json({ errors: errors.array() })
+  }
+
+  else{
+
+    const newresource = req.body
+    resources.add(newresource)
+      .then(newresource => {
+        res.json(newresource)
+      })
+      .catch(err => {
+        res.json({ message: err })
+      })
+
+  }
+
 })
 
 router.put('/:id', validateBody, validateId, (req, res) => {
